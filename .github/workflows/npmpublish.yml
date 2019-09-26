@@ -17,4 +17,6 @@ jobs:
       - run: npm run build
       - run: npm run deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.sudoku_username }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FIRST_NAME: Charan
+          LAST_NAME: Gopal
