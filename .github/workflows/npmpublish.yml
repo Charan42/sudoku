@@ -16,6 +16,8 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: npm run deploy
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FIRST_NAME: Charan
