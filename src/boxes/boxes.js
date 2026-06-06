@@ -7,9 +7,10 @@ const Grid = ({ grid, errorCells, onChange }) => {
         row.map((value, c) => (
           <input
             key={`${r},${c}`}
-            type="number"
-            min="1"
-            max="9"
+            type="text"
+            inputMode="numeric"
+            pattern="[1-9]"
+            maxLength={1}
             value={value}
             onChange={e => onChange(r, c, e.target.value)}
             className={[

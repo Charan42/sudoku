@@ -36,13 +36,10 @@ function App() {
   const [isValid, setIsValid] = useState(null);
 
   const handleChange = (row, col, rawValue) => {
-    let value = '';
-    if (rawValue !== '') {
-      const parsed = parseInt(rawValue, 10);
-      if (!isNaN(parsed)) {
-        value = Math.min(9, Math.max(1, parsed));
-      }
-    }
+    // Keep only digits 1-9 and use the last one typed, so a cell always
+    // holds a single digit (typing "6" then "6" stays "6", not "66" -> 9).
+    const digits = rawValue.replace(/[^1-9]/g, '');
+    const value = digits ? digits[digits.length - 1] : '';
     setGrid(prev => prev.map((r, ri) =>
       r.map((c, ci) => (ri === row && ci === col ? value : c))
     ));
