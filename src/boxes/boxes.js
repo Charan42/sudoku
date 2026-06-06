@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Grid = ({ grid, errorCells, onChange }) => {
+const Grid = ({ grid, errorCells, onChange, onBlur }) => {
   return (
     <div className="grid">
       {grid.map((row, r) =>
@@ -13,6 +13,7 @@ const Grid = ({ grid, errorCells, onChange }) => {
             maxLength={1}
             value={value}
             onChange={e => onChange(r, c, e.target.value)}
+            onBlur={() => onBlur(r, c)}
             className={[
               'cell',
               c === 2 || c === 5 ? 'thick-right' : '',
