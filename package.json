@@ -1,28 +1,30 @@
 {
-  "name": "suduko",
-  "version": "0.1.0",
+  "name": "sudoku",
+  "version": "1.0.0",
   "private": true,
   "homepage": "https://charan42.github.io/sudoku",
-  "dependencies": {
-    "gh-pages": "^2.1.1",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
-    "react-scripts": "2.1.2"
-  },
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "deploy": "gh-pages -d build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "deploy": "npm run build && gh-pages -d dist"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "@testing-library/react": "^14.1.0",
+    "@testing-library/jest-dom": "^6.2.0",
+    "gh-pages": "^6.1.1",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.1.0",
+    "vitest": "^1.3.0"
+  }
 }
