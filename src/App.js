@@ -1,112 +1,129 @@
-import React, { Component } from 'react';
-import Boxes from './boxes/boxes';
+import React, { useState } from 'react';
+import Grid from './boxes/boxes';
 
+function createEmptyGrid() {
+  return Array(9).fill(null).map(() => Array(9).fill(''));
+}
 
-class App extends Component {
+function getOrdinal(n) {
+  if (n === 1) return '1st';
+  if (n === 2) return '2nd';
+  if (n === 3) return '3rd';
+  return `${n}th`;
+}
 
-  errors = '';
-   errorsDiv = document.createElement('div');
-
-
-
-  checker = (arr, n, rc) => {
-    let unique =  arr;
-    let sub = 'th';
-    unique = unique.map((item,i) => unique.includes(item, i+1) ? item : '' );
-    unique = [...new Set(unique)].filter(n => n);
-    if(unique.length){
-      sub = (n === 1) ? 'st' : (n === 2) ? 'nd' : (n === 3) ? 'rd' : 'th' ;
-      this.errors += ' error in ' + n + sub+' '+ rc + `</br>`;
-    //  console.log(' error in ' + n + 'th '+ rc);
+function findDuplicateCells(cells) {
+  const seen = {};
+  const dupKeys = new Set();
+  cells.forEach(({ value, key }) => {
+    if (value === '' || value === null) return;
+    const v = String(value);
+    if (seen[v]) {
+      dupKeys.add(key);
+      seen[v].forEach(k => dupKeys.add(k));
+    } else {
+      seen[v] = [];
     }
-  }
-  rowAndColumnChecker =(a)=>{
-    let RC = ['Row', 'Column'];
-    for(let k=0; k< RC.length; k++){
-      for(let i=0; i< a.length; i++){
-        let arr = [];
-        for(let j=0; j< a[i].length; j++){
-          let num = (RC[k] == 'Row') ?  a[i][j] : a[j][i];
-          if(num){arr.push(parseInt(num))}
-        }
-        this.checker(arr, i+1, RC[k]);
+    seen[v].push(key);
+  });
+  return dupKeys;
+}
+
+function App() {
+  const [grid, setGrid] = useState(createEmptyGrid());
+  const [errors, setErrors] = useState([]);
+  const [errorCells, setErrorCells] = useState(new Set());
+  const [isValid, setIsValid] = useState(null);
+
+  const handleChange = (row, col, rawValue) => {
+    let value = '';
+    if (rawValue !== '') {
+      const parsed = parseInt(rawValue, 10);
+      if (!isNaN(parsed)) {
+        value = Math.min(9, Math.max(1, parsed));
       }
     }
+    setGrid(prev => prev.map((r, ri) =>
+      r.map((c, ci) => (ri === row && ci === col ? value : c))
+    ));
+    setErrors([]);
+    setErrorCells(new Set());
+    setIsValid(null);
+  };
 
-  }
+  const validate = () => {
+    const newErrors = [];
+    const allErrorCells = new Set();
 
-  boxesChecker = (ar) => {
-    let A =[[0,1,2],[3,4,5],[6,7,8]];
-    let B =[[0,1,2],[3,4,5],[6,7,8]];
+    const check = (cells, label) => {
+      const dups = findDuplicateCells(cells);
+      if (dups.size > 0) {
+        newErrors.push(`Duplicate in ${label}`);
+        dups.forEach(k => allErrorCells.add(k));
+      }
+    };
 
-    let boxNo = 0;
-    A.forEach(a =>{
-      B.forEach(b =>{
-        boxNo++;
-        let arr =[]
-        for(let i=0; i<3 ; i++){
-          for(let j=0; j<3 ; j++){
-            let num = ar[a[i]][b[j]] ;
-            if(num){arr.push(parseInt(num));
-              let n = a[i];
-              let m = b[j];
-            }
+    for (let r = 0; r < 9; r++) {
+      check(
+        grid[r].map((value, c) => ({ value, key: `${r},${c}` })),
+        `${getOrdinal(r + 1)} row`
+      );
+    }
+
+    for (let c = 0; c < 9; c++) {
+      check(
+        grid.map((row, r) => ({ value: row[c], key: `${r},${c}` })),
+        `${getOrdinal(c + 1)} column`
+      );
+    }
+
+    for (let br = 0; br < 3; br++) {
+      for (let bc = 0; bc < 3; bc++) {
+        const cells = [];
+        for (let r = 0; r < 3; r++) {
+          for (let c = 0; c < 3; c++) {
+            const row = br * 3 + r;
+            const col = bc * 3 + c;
+            cells.push({ value: grid[row][col], key: `${row},${col}` });
           }
         }
-        this.checker(arr, boxNo, 'box');
-      })
-    })
-  }
-
-  getValues = () =>{
-    let sudokoValues = [];
-    for(let i=1; i<10; i++){
-      let arr = [];
-      for(let j=1; j<10; j++){
-        let input = "input[name=" + '"' + i + ',' + j +'"]'; 
-        let num = document.querySelectorAll( `${input}` )[0].value;
-        if(num){arr.push(parseInt(num))
-        }else {arr.push(null)}
+        check(cells, `${getOrdinal(br * 3 + bc + 1)} box`);
       }
-      sudokoValues.push(arr);
     }
-    return(sudokoValues);
-    // console.log(sudokoValues);
-  }
 
-  onValidate = (e) =>{
-    console.time();
-    e.preventDefault();
+    setErrors(newErrors);
+    setErrorCells(allErrorCells);
+    setIsValid(newErrors.length === 0);
+  };
 
-    let sudoko = this.getValues();
-    // console.log(sudoko);
+  const clearGrid = () => {
+    setGrid(createEmptyGrid());
+    setErrors([]);
+    setErrorCells(new Set());
+    setIsValid(null);
+  };
 
-    for(let i=0; i< sudoko.length; i++){
-
-      for(let j=0; j< sudoko[i].length; j++){
-      //  console.log(sudoko[i][j]);
-      }
-
-    }
-    this.rowAndColumnChecker(sudoko);
-    this.boxesChecker(sudoko);
-    let ele = document.querySelectorAll('#message')[0];
-    ele.innerHTML = this.errors;
-    this.errors = '';
-  
-console.timeEnd();
-
-  }
-  render() {
-    return (
-      <div className="App">
-        <form>
-          <Boxes Validate={this.onValidate} />
-        </form>
-        <div className="message" id="message"></div>
+  return (
+    <div className="app">
+      <h1 className="title">Sudoku Validator</h1>
+      <p className="subtitle">Enter numbers 1–9 and click Validate</p>
+      <Grid grid={grid} errorCells={errorCells} onChange={handleChange} />
+      <div className="actions">
+        <button onClick={validate} className="btn btn-validate">Validate</button>
+        <button onClick={clearGrid} className="btn btn-clear">Clear</button>
       </div>
-    );
-  }
+      {isValid === true && (
+        <div className="result success">No duplicates found — looks valid!</div>
+      )}
+      {isValid === false && (
+        <div className="result error-list">
+          {errors.map((err, i) => (
+            <div key={i} className="error-item">{err}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default App;

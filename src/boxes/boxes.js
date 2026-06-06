@@ -1,29 +1,28 @@
-import React from 'react' ;
+import React from 'react';
 
+const Grid = ({ grid, errorCells, onChange }) => {
+  return (
+    <div className="grid">
+      {grid.map((row, r) =>
+        row.map((value, c) => (
+          <input
+            key={`${r},${c}`}
+            type="number"
+            min="1"
+            max="9"
+            value={value}
+            onChange={e => onChange(r, c, e.target.value)}
+            className={[
+              'cell',
+              c === 2 || c === 5 ? 'thick-right' : '',
+              r === 2 || r === 5 ? 'thick-bottom' : '',
+              errorCells.has(`${r},${c}`) ? 'error-cell' : '',
+            ].filter(Boolean).join(' ')}
+          />
+        ))
+      )}
+    </div>
+  );
+};
 
-const box = (props) =>{
-    console.log(props);
-
-    let columns = [1,2,3,4,5,6,7,8,9];
-    let boxes = columns.map(column =>{
-        let rows = [1,2,3,4,5,6,7,8,9];
-        let singleColumn = rows.map(row =>{
-            let arr = [column, row]
-            return (
-                <input type="number" onChange={props.Validate} name={arr} key={arr} min="1" max="9"></input>
-            )
-
-        })
-        return (<div key={column} className="sudoko_row">{singleColumn}</div>)
-
-    }) 
-    return boxes
-}
-
-const Boxes = (props) => {
-    return(
-        <div className="sudoko">{box(props)}</div>
-    )
-}
-
-export default Boxes
+export default Grid;
