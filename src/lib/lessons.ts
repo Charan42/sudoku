@@ -572,27 +572,41 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'We don’t know WHICH of the two cells holds the 2 — but either way, the 2 of this box lands in that row. The row gets its 2 inside the box… so the 2 can be erased from the rest of the row! The pair “points” along the row.',
+          'Before we use that, pencil-mark the row’s two empty cells OUTSIDE the box. The middle one sees 4, 9, 6 and 3 in its row, plus 7, 5, 3 and 8 in its column — that rules out everything except 1 and 2. The cell at the end of the row sees fewer digits, so it keeps 1, 2, 5, 7 and 8.',
+        highlight: { cells: [[7, 4], [7, 8]], units: [row(7), col(4)] },
+        notes: [
+          { cell: [7, 0], digits: [2, 7, 8] },
+          { cell: [7, 1], digits: [2, 7, 8] },
+          { cell: [7, 4], digits: [1, 2] },
+          { cell: [7, 8], digits: [1, 2, 5, 7, 8] },
+        ],
+      },
+      {
+        kind: 'info',
+        text:
+          'Now the pointing pair strikes. We don’t know WHICH of the two box cells holds the 2 — but either way, the 2 of this row lands inside the box. So the 2 can be erased from every row cell outside the box: both pencil-marked cells lose their 2. The pair “points” along the row.',
         highlight: { cells: [[7, 0], [7, 1]], units: [row(7)] },
         notes: [
           { cell: [7, 0], digits: [2, 7, 8] },
           { cell: [7, 1], digits: [2, 7, 8] },
           { cell: [7, 4], digits: [1, 2], eliminated: [2] },
+          { cell: [7, 8], digits: [1, 2, 5, 7, 8], eliminated: [2] },
         ],
       },
       {
         kind: 'find-cell',
         text:
-          'One cell on that row had the candidates 1 and 2 — and we just erased its 2. Tap the cell that is now solved.',
+          'One of those two cells had only 1 and 2 — and we just erased its 2. Tap the cell that is now solved.',
         target: [7, 4],
         highlight: { units: [row(7)] },
         notes: [
           { cell: [7, 0], digits: [2, 7, 8] },
           { cell: [7, 1], digits: [2, 7, 8] },
           { cell: [7, 4], digits: [1, 2], eliminated: [2] },
+          { cell: [7, 8], digits: [1, 2, 5, 7, 8], eliminated: [2] },
         ],
         hint: 'Look along the row, outside the box, for the cell whose pencil marks just dropped to a single digit.',
-        success: 'That’s it — its 2 was eliminated by the pointing pair.',
+        success: 'That’s it — its 2 was eliminated by the pointing pair, leaving only the 1.',
       },
       {
         kind: 'pick-digit',
@@ -657,11 +671,12 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'So 9 can be erased from every other cell of those two columns. Follow the right-hand column into the middle row: that cell’s pencil marks were 1 and 9 — and the 9 just vanished.',
-        highlight: { cells: [[4, 8]], units: [col(8)] },
+          'So 9 can be erased from every other cell of those two columns. Follow the right-hand column into the middle row: that row is filled except for its last two cells, whose only missing digits are 1 and 9. So this cell’s pencil marks were 1 and 9 — and the 9 just vanished.',
+        highlight: { cells: [[4, 8]], units: [col(8), row(4)] },
         notes: [
           { cell: [1, 8], digits: [8, 9] },
           { cell: [8, 8], digits: [8, 9] },
+          { cell: [4, 7], digits: [1, 9] },
           { cell: [4, 8], digits: [1, 9], eliminated: [9] },
         ],
       },

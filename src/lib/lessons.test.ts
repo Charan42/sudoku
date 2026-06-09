@@ -259,6 +259,16 @@ describe('lesson 8: pointing pair', () => {
     expect(candidates(board, 7, 4)).toEqual([1, 2]);
   });
 
+  it('the derivation shown in the lesson matches the board', () => {
+    // (7,4) sees 4,9,6,3 in its row and 7,5,3,8 in its column — only 1,2 left
+    expect(board[7].filter(v => v !== null)).toEqual([4, 9, 6, 3]);
+    expect(board.map(r => r[4]).filter(v => v !== null)).toEqual([7, 5, 3, 8]);
+    // the other row cell outside the box keeps 1,2,5,7,8
+    expect(candidates(board, 7, 8)).toEqual([1, 2, 5, 7, 8]);
+    // and the box cell in column 2 has lost its 2 to the given 2 up the column
+    expect(candidates(board, 7, 2)).toEqual([7, 8]);
+  });
+
   it('needs the pointing pair: 1 is NOT a hidden single in row 7 or column 4 or box 7', () => {
     expect(digitSpotsInCells(board, rowCells(7), 1).length).toBeGreaterThan(1);
     const col4: [number, number][] = Array.from({ length: 9 }, (_, r) => [r, 4]);
@@ -290,6 +300,9 @@ describe('lesson 9: x-wing', () => {
 
   it('payoff cell (4,8) has candidates {1,9}; the x-wing elimination leaves 1', () => {
     expect(candidates(board, 4, 8)).toEqual([1, 9]);
+    // as the lesson explains: row 4 is filled except its last two cells
+    expect(board[4].filter(v => v !== null)).toEqual([4, 2, 6, 8, 5, 3, 7]);
+    expect(candidates(board, 4, 7)).toEqual([1, 9]);
   });
 
   it('needs the x-wing: simple scans cannot remove 9 from (4,8)', () => {
