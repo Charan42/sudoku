@@ -185,7 +185,7 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'Rows and columns follow the same rule as boxes: each must contain 1–9 exactly once. The highlighted row has 8 digits placed and a single gap.',
+          'Rows and columns follow the same rule as boxes: each must contain 1–9 exactly once. So the Last Free Cell trick from the previous lesson works on lines too. The highlighted row has 8 digits placed and a single gap.',
         highlight: { units: [row(4)], dimOthers: true },
       },
       {
@@ -281,7 +281,7 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'Tip: you don’t need 8 placed digits in one unit for this to work — the eliminations came from three different units that overlap on a single cell. Always check all three!',
+          'Tip: unlike Last Free Cell, you don’t need 8 placed digits in one unit for this to work — here the eliminations came from three different units that overlap on a single cell. Always check all three!',
         highlight: { cells: [[4, 4]] },
       },
     ],
@@ -347,7 +347,7 @@ export const LESSONS: Lesson[] = [
         highlight: { cells: [[0, 0]], units: [box(0)] },
         hint: 'We asked where the 5 can go… so place the 5!',
         success:
-          'This is a Hidden Single: the cell could seemingly hold several digits, but it is the only home for the 5 in its box. Scanning each digit box-by-box like this is called cross-hatching.',
+          'This is a Hidden Single: unlike a Naked Single, the cell itself could still hold several digits — but it is the only home for the 5 in its box. Scanning each digit box-by-box like this is called cross-hatching.',
       },
     ],
   },
@@ -374,7 +374,7 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'The bottom row needs an 8 (among other digits), and it has four empty cells. Where can the 8 go? Let’s check each empty cell against its column.',
+          'The same “where can it go?” question from Hidden Single — Box works on lines. The bottom row needs an 8, and it has four empty cells. Where can the 8 go? Let’s check each empty cell against its column.',
         highlight: { units: [row(8)] },
       },
       {
@@ -432,7 +432,7 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'pick-digits',
         text:
-          'Its row removes 5, 3 and 2. Its column removes 9, 4 and 1. Select ALL the digits that can still go in this cell, then press Check.',
+          'Its row removes 5, 3 and 2. Its column removes 9, 4 and 1. Its box holds only the 9 and 4 you’ve already counted, so it adds nothing new. Select ALL the digits that can still go in this cell, then press Check.',
         cell: [0, 4],
         answers: [6, 7, 8],
         highlight: { cells: [[0, 4]], units: [row(0), col(4), box(1)] },
@@ -477,12 +477,12 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'The top row has three empty cells, missing 6, 7 and 8. With pencil marks filled in, the middle and right empty cells can each only be 7 or 8 — a 6 in each of their columns rules the 6 out.',
-        highlight: { cells: [[0, 4], [0, 5]], units: [row(0)] },
+          'The top row has three empty cells, missing 6, 7 and 8 — so each starts with the Pencil Marks 6·7·8. But look down the columns: the two highlighted 6s rule the 6 out of the middle and right empty cells, trimming them to just 7·8.',
+        highlight: { cells: [[3, 4], [8, 5]], units: [row(0), col(4), col(5)] },
         notes: [
           { cell: [0, 3], digits: [6, 7, 8] },
-          { cell: [0, 4], digits: [7, 8] },
-          { cell: [0, 5], digits: [7, 8] },
+          { cell: [0, 4], digits: [6, 7, 8], eliminated: [6] },
+          { cell: [0, 5], digits: [6, 7, 8], eliminated: [6] },
         ],
       },
       {
@@ -508,7 +508,7 @@ export const LESSONS: Lesson[] = [
       },
       {
         kind: 'pick-digit',
-        text: '…which leaves it just one candidate. Place it!',
+        text: '…which leaves it just one candidate — a Naked Single. Place it!',
         cell: [0, 3],
         answer: 6,
         highlight: { cells: [[0, 3]], units: [row(0)] },
@@ -555,7 +555,7 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'Look at the bottom-left box. It’s missing 2, 7 and 8, with three empty cells — all in its middle row. Where can the 2 go inside this box?',
+          'Look at the bottom-left box. It’s missing 2, 7 and 8, with three empty cells — all in its middle row. Start with the cross-hatching question from Hidden Single — Box: where can the 2 go inside this box?',
         highlight: { units: [box(6)] },
       },
       {
@@ -572,7 +572,7 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'Before we use that, pencil-mark the row’s two empty cells OUTSIDE the box. The middle one sees 4, 9, 6 and 3 in its row, plus 7, 5, 3 and 8 in its column — that rules out everything except 1 and 2. The cell at the end of the row sees fewer digits, so it keeps 1, 2, 5, 7 and 8.',
+          'Before we use that, apply the Pencil Marks routine to the row’s two empty cells OUTSIDE the box. The middle one sees 4, 9, 6 and 3 in its row, plus 7, 5, 3 and 8 in its column — that rules out everything except 1 and 2. The cell at the end of the row sees fewer digits, so it keeps 1, 2, 5, 7 and 8.',
         highlight: { cells: [[7, 4], [7, 8]], units: [row(7), col(4)] },
         notes: [
           { cell: [7, 0], digits: [2, 7, 8] },
@@ -606,7 +606,7 @@ export const LESSONS: Lesson[] = [
           { cell: [7, 8], digits: [1, 2, 5, 7, 8], eliminated: [2] },
         ],
         hint: 'Look along the row, outside the box, for the cell whose pencil marks just dropped to a single digit.',
-        success: 'That’s it — its 2 was eliminated by the pointing pair, leaving only the 1.',
+        success: 'That’s it — its 2 was eliminated by the pointing pair, leaving a Naked Single: only the 1 remains.',
       },
       {
         kind: 'pick-digit',
@@ -646,7 +646,7 @@ export const LESSONS: Lesson[] = [
       {
         kind: 'info',
         text:
-          'The expert move. Watch the digit 9. In row 2, every cell is filled except two — so row 2’s 9 must be in one of those two cells. The same is true in row 9: its 9 fits only its own two empty cells.',
+          'The expert move. Watch the digit 9. Row 2 is filled except for two cells, so their Pencil Marks are the row’s two missing digits: 8 and 9 — meaning row 2’s 9 must be in one of those two cells. The same is true in row 9: its 9 fits only its own two empty cells.',
         highlight: {
           cells: [[1, 4], [1, 8], [8, 4], [8, 8]],
           units: [row(1), row(8)],
@@ -682,7 +682,7 @@ export const LESSONS: Lesson[] = [
       },
       {
         kind: 'pick-digit',
-        text: 'The X-Wing eliminated the 9. Solve the cell!',
+        text: 'The X-Wing eliminated the 9, leaving a Naked Single. Solve the cell!',
         cell: [4, 8],
         answer: 1,
         highlight: { cells: [[4, 8]], units: [col(8)] },
