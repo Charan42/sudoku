@@ -1,119 +1,59 @@
-import { useEffect } from 'react';
-import { useGame } from './hooks/useGame';
-import { Header } from './components/Header';
-import { Grid } from './components/Grid';
-import { NumberPad } from './components/NumberPad';
-import { Controls } from './components/Controls';
-import { Digit } from './lib/types';
+import { useEffect, useState } from 'react';
+import { HomePage } from './pages/HomePage';
+import { GamePage } from './pages/GamePage';
+import { LessonPage } from './pages/LessonPage';
+
+/**
+ * Tiny hash-based router (`#/`, `#/game`, `#/learn/:id`).
+ * Hash routing is used (instead of path routing) so deep links survive a page
+ * refresh on GitHub Pages, where the app is served from a static base path.
+ */
+function useHashRoute(): string {
+  const [hash, setHash] = useState(() => window.location.hash);
+  useEffect(() => {
+    const onChange = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onChange);
+    return () => window.removeEventListener('hashchange', onChange);
+  }, []);
+  const route = hash.replace(/^#/, '');
+  return route === '' ? '/' : route;
+}
 
 export default function App() {
-  const {
-    state,
-    errorCells,
-    peerKeys,
-    sameValueKeys,
-    newGame,
-    input,
-    select,
-    undo,
-    redo,
-    hint,
-    toggleNotes,
-    togglePause,
-    toggleTheme,
-    shareUrl,
-    timerFormatted,
-  } = useGame();
+  const route = useHashRoute();
 
-  // Apply theme on mount and change
+  // Apply the saved theme everywhere (the game page keeps managing its own toggle)
   useEffect(() => {
-    document.documentElement.dataset.theme = state.theme;
-  }, [state.theme]);
+    try {
+      const raw = localStorage.getItem('sudoku-state');
+      if (raw) {
+        const theme = (JSON.parse(raw) as { theme?: string }).theme;
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.dataset.theme = theme;
+        }
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
 
-  const handleShare = () => {
-    const url = shareUrl();
-    // Update the browser URL so clipboard copy in Controls picks it up
-    window.history.replaceState(null, '', url);
-  };
+  // Legacy shared-puzzle links (?p=...) point at the root: send them to the game.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('p') && route === '/') {
+      window.location.hash = '#/game';
+    }
+  }, [route]);
 
-  return (
-    <div className="app">
-      <Header
-        difficulty={state.difficulty}
-        mistakes={state.mistakes}
-        maxMistakes={state.maxMistakes}
-        timerFormatted={timerFormatted}
-        isPaused={state.isPaused}
-        theme={state.theme}
-        onTogglePause={togglePause}
-        onToggleTheme={toggleTheme}
-      />
+  // Start each page at the top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [route]);
 
-      <main className="app__main">
-        <Grid
-          cells={state.cells}
-          selected={state.selected}
-          errorCells={errorCells}
-          peerKeys={peerKeys}
-          sameValueKeys={sameValueKeys}
-          isPaused={state.isPaused}
-          onSelect={select}
-          onInput={(d: Digit | null) => input(d)}
-          onToggleNotes={toggleNotes}
-          onUndo={undo}
-          onRedo={redo}
-        />
+  if (route === '/game') return <GamePage />;
 
-        <NumberPad
-          notesMode={state.notesMode}
-          onInput={(d: Digit | null) => input(d)}
-          onToggleNotes={toggleNotes}
-        />
+  const lessonMatch = route.match(/^\/learn\/([\w-]+)$/);
+  if (lessonMatch) return <LessonPage lessonId={lessonMatch[1]} />;
 
-        <Controls
-          difficulty={state.difficulty}
-          canUndo={state.past.length > 0}
-          canRedo={state.future.length > 0}
-          generating={state.generating}
-          onNewGame={newGame}
-          onUndo={undo}
-          onRedo={redo}
-          onHint={hint}
-          onShare={handleShare}
-        />
-      </main>
-
-      {state.isGameOver && (
-        <div className="overlay overlay--game-over" role="dialog" aria-label="Game over">
-          <div className="overlay__card">
-            <div className="overlay__icon">💀</div>
-            <h2 className="overlay__title">Game Over</h2>
-            <p className="overlay__message">Too many mistakes!</p>
-            <button
-              className="overlay__btn"
-              onClick={() => newGame(state.difficulty)}
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      )}
-
-      {state.isComplete && (
-        <div className="overlay overlay--complete" role="dialog" aria-label="Puzzle complete">
-          <div className="overlay__card">
-            <div className="overlay__icon">🎉</div>
-            <h2 className="overlay__title">You Win!</h2>
-            <p className="overlay__message">Congratulations! Puzzle solved!</p>
-            <button
-              className="overlay__btn"
-              onClick={() => newGame(state.difficulty)}
-            >
-              Play Again
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return <HomePage />;
 }
